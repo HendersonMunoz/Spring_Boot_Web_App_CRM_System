@@ -1,33 +1,101 @@
 package com.example.application.views.list;
 
-import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.html.Paragraph;
+import com.example.application.data.entity.Contact;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.theme.lumo.LumoUtility.Margin;
+import com.vaadin.flow.theme.lumo.LumoUtility;
 
-@PageTitle("list")
+import java.util.Collections;
+
+//This file is where the UI elements reside.
+
+@PageTitle("Contacts | Vaadin CRM")
 @Route(value = "")
 public class ListView extends VerticalLayout {
+    // creating the CRM grid.
+    // Calling on a built-in Vaadin class, called 'Contact class'. details can be view by right-clicking on it.
+    Grid<Contact> grid = new Grid<>(Contact.class);
+    // creating text-fields for the new grid.
+    TextField filterText = new TextField();
+    //fetching the ContactForm class.
+    ContactForm form;
 
+    // Adding UI components below.
     public ListView() {
-        setSpacing(false);
-
-        Image img = new Image("images/empty-plant.png", "placeholder plant");
-        img.setWidth("200px");
-        add(img);
-
-        H2 header = new H2("This place intentionally left empty");
-        header.addClassNames(Margin.Top.XLARGE, Margin.Bottom.MEDIUM);
-        add(header);
-        add(new Paragraph("It’s a place where you can grow your own UI 🤗"));
-
+        // Adding a ClassName, so that it makes things easier when I write CSS class later in the project.
+        addClassName("list-view");
+        //making the list view the same size as the entire window.
         setSizeFull();
-        setJustifyContentMode(JustifyContentMode.CENTER);
-        setDefaultHorizontalComponentAlignment(Alignment.CENTER);
-        getStyle().set("text-align", "center");
+        //configuring the layout.
+        configureGrid();
+        //Configuration method for the Contact Form.
+        configureForm();
+
+        //adding toolbar components to the grid.
+        add(
+                //calling the getToolBar method.
+                getToolBar(),
+                //calling the getContent method.
+                getContent()
+        );
+    }
+    // method that creates a horizontal wrapper layout that holds the grid and the contact form next to each-other.
+    private Component getContent() {
+        HorizontalLayout content = new HorizontalLayout(grid, form);
+        // line below says that the grid should get 2/3s of the page space/layout.
+        content.setFlexGrow(2, grid);
+        // line below says that the form should get 1/3 of the page space/layout.
+        content.setFlexGrow(1,form);
+        content.addClassName("Content");
+        content.setSizeFull();
+
+        return content;
     }
 
+    //method for the configureForm method.
+    private void configureForm() {
+        // collection.emptylist() is just a place-holder. Once i connect to the back end, we'll have actual companies and statuses.
+        form = new ContactForm(Collections.emptyList(), Collections.emptyList());
+        form.setWidth("25em");
+    }
+
+    //creating the getToolBar component.
+    private Component getToolBar() {
+        //search field with a place-holder title.
+        filterText.setPlaceholder("Filter by name...");
+        //Clear button
+        filterText.setClearButtonVisible(true);
+        //ValueChangeMode(LAZY) -> this means that the app will wait until the user stops typing, to fetch the data,
+        // from the database. If we don't use this 'LAZY' mode, the app will try fetching the data after every keystroke.
+        filterText.setValueChangeMode(ValueChangeMode.LAZY);
+
+        //Adding a button to create a new contact.
+        Button addContactButton = new Button("Add contact");
+
+        // arranging these components into a horizontal layout.
+        HorizontalLayout toolbar = new HorizontalLayout(filterText, addContactButton);
+        toolbar.addClassName("toolbar");
+        return toolbar;
+    }
+
+    // creating the configureGrid method.
+    private void configureGrid(){
+        //adding a className to this grid, so I can style it later in the project.
+        grid.addClassName("contact-grid");
+        grid.setSizeFull();;
+        // Choose the addColumn String
+        grid.setColumns("firstName", "lastName", "email");
+        //chose the addColumn Render <Column> renderer.
+        grid.addColumn(contact -> contact.getStatus().getName()).setHeader("Status");
+        grid.addColumn(contact -> contact.getCompany().getName()).setHeader("Company");
+        // line of code below will automatically resize all the columns.
+        grid.getColumns().forEach(col -> col.setAutoWidth(true));
+    }
 }
