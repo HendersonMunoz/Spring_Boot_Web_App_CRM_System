@@ -1,6 +1,7 @@
 package com.example.application.views.list;
 
 import com.example.application.data.entity.Contact;
+import com.example.application.data.service.CrmService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
@@ -14,7 +15,7 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
 
 import java.util.Collections;
 
-//This file is where the UI elements reside.
+//UI ELEMENTS RESIDE WITHIN THIS LISTVIEW FILE.
 
 @PageTitle("Contacts | Vaadin CRM")
 @Route(value = "")
@@ -26,9 +27,12 @@ public class ListView extends VerticalLayout {
     TextField filterText = new TextField();
     //fetching the ContactForm class.
     ContactForm form;
+    private CrmService service;
 
-    // Adding UI components below.
-    public ListView() {
+    // ADDING UI COMPONENTS.
+    // Also, auto-wiring the CrmService Class, for DB connectivity.
+    public ListView(CrmService service) {
+        this.service = service;
         // Adding a ClassName, so that it makes things easier when I write CSS class later in the project.
         addClassName("list-view");
         //making the list view the same size as the entire window.
@@ -45,7 +49,17 @@ public class ListView extends VerticalLayout {
                 //calling the getContent method.
                 getContent()
         );
+
+        //calling the updateList method, Updates the contact list in the DB.
+        updateList();
     }
+
+    //METHODS CREATED BELOW.
+
+    private void updateList() {
+        grid.setItems(service.findAllContacts(filterText.getValue()));
+    }
+
     // method that creates a horizontal wrapper layout that holds the grid and the contact form next to each-other.
     private Component getContent() {
         HorizontalLayout content = new HorizontalLayout(grid, form);
@@ -61,8 +75,7 @@ public class ListView extends VerticalLayout {
 
     //method for the configureForm method.
     private void configureForm() {
-        // collection.emptylist() is just a place-holder. Once i connect to the back end, we'll have actual companies and statuses.
-        form = new ContactForm(Collections.emptyList(), Collections.emptyList());
+        form = new ContactForm(service.findAllCompanies(), service.findAllStatuses());
         form.setWidth("25em");
     }
 
@@ -75,6 +88,8 @@ public class ListView extends VerticalLayout {
         //ValueChangeMode(LAZY) -> this means that the app will wait until the user stops typing, to fetch the data,
         // from the database. If we don't use this 'LAZY' mode, the app will try fetching the data after every keystroke.
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
+        //filterText field, will filter through records as we're typing.
+        filterText.addValueChangeListener(e -> updateList());
 
         //Adding a button to create a new contact.
         Button addContactButton = new Button("Add contact");
