@@ -52,10 +52,22 @@ public class ListView extends VerticalLayout {
 
         //calling the updateList method, Updates the contact list in the DB.
         updateList();
+
+        //Calling on the closeEditor() method. When we start the application, we won't see the form
+        //Because we don't have anyone selected.
+        closeEditor();
     }
 
     //METHODS CREATED BELOW.
 
+    //closes the contact form, unless the user interacts with it.
+    private void closeEditor() {
+        form.setContact(null);
+        form.setVisible(false);
+        removeClassName("editing");
+    }
+
+    //method that updates the contact list.
     private void updateList() {
         grid.setItems(service.findAllContacts(filterText.getValue()));
     }
@@ -77,6 +89,24 @@ public class ListView extends VerticalLayout {
     private void configureForm() {
         form = new ContactForm(service.findAllCompanies(), service.findAllStatuses());
         form.setWidth("25em");
+
+        //adding listeners to the form, for the customer events (buttons functionality.)
+        form.addSaveListener(this::saveContact);
+        form.addDeleteListener(this::deleteContact);
+        form.addCloseListener(e -> closeEditor());
+    }
+
+    //method for the saveContact button function.
+    private void saveContact(ContactForm.SaveEvent event) {
+        service.saveContact(event.getContact());
+        updateList();
+        closeEditor();
+    }
+    //method for the deleteContact button function.
+    private void deleteContact(ContactForm.DeleteEvent event) {
+        service.deleteContact(event.getContact());
+        updateList();
+        closeEditor();
     }
 
     //creating the getToolBar component.
@@ -91,13 +121,22 @@ public class ListView extends VerticalLayout {
         //filterText field, will filter through records as we're typing.
         filterText.addValueChangeListener(e -> updateList());
 
-        //Adding a button to create a new contact.
+        //Add button to create a new contact.
         Button addContactButton = new Button("Add contact");
+        //Giving the Add button functionality.
+        addContactButton.addClickListener(q -> addContact());
 
         // arranging these components into a horizontal layout.
         HorizontalLayout toolbar = new HorizontalLayout(filterText, addContactButton);
         toolbar.addClassName("toolbar");
         return toolbar;
+    }
+
+    //method for the Add contact button functionality.
+    private void addContact() {
+        //using .clear() - this means that when we create a new contact, we don't want a different contact to be selected.
+        grid.asSingleSelect().clear();
+        editContact(new Contact());
     }
 
     // creating the configureGrid method.
@@ -112,5 +151,19 @@ public class ListView extends VerticalLayout {
         grid.addColumn(contact -> contact.getCompany().getName()).setHeader("Company");
         // line of code below will automatically resize all the columns.
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
+
+        //if a user gets selected from the list, the code below will populate the user info in the contact form.
+        //so that the contact info can be manipulated.
+        grid.asSingleSelect().addValueChangeListener(e -> editContact(e.getValue()));
+    }
+    //edit contact method. Used under the configureGrid() method above.
+    private void editContact(Contact contact) {
+        if(contact == null){
+            closeEditor();
+        }else{
+            form.setContact(contact);
+            form.setVisible(true);
+            addClassName("editing");
+        }
     }
 }

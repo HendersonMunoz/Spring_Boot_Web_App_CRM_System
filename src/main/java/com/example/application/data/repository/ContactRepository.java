@@ -7,8 +7,9 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
+//Implementing filtering in the repository (https://vaadin.com/docs/latest/tutorial/database-access)
 public interface ContactRepository extends JpaRepository<Contact, Integer> {
-    //Implementing filtering in the repository (https://vaadin.com/docs/latest/tutorial/database-access)
+
     @Query("select c from Contact c " +
             "where lower(c.firstName) like lower(concat('%', :searchTerm, '%')) " +
             "or lower(c.lastName) like lower(concat('%', :searchTerm, '%'))")
