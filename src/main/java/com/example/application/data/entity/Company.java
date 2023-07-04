@@ -4,17 +4,28 @@ import jakarta.annotation.Nullable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
+import org.hibernate.annotations.Formula;
+
 import java.util.LinkedList;
 import java.util.List;
 
 @Entity
 public class Company extends AbstractEntity {
+    public Number getEmployeeCount;
     @NotBlank
     private String name;
 
     @OneToMany(mappedBy = "company")
     @Nullable
     private List<Contact> employees = new LinkedList<>();
+
+    //Code block below is to get Employee count, used for the Dashboard view. Code was copied from (https://vaadin.com/docs/latest/tutorial/navigation-and-layouts)
+    @Formula("(select count(c.id) from Contact c where c.company_id = id)")
+    private int employeeCount;
+
+    public int getEmployeeCount(){
+        return employeeCount;
+    }
 
     public String getName() {
         return name;
