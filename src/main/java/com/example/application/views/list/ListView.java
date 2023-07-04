@@ -2,6 +2,7 @@ package com.example.application.views.list;
 
 import com.example.application.data.entity.Contact;
 import com.example.application.data.service.CrmService;
+import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
@@ -18,7 +19,8 @@ import java.util.Collections;
 //UI ELEMENTS RESIDE WITHIN THIS LISTVIEW FILE.
 
 @PageTitle("Contacts | Vaadin CRM")
-@Route(value = "")
+// MainLayout.cass is the java class we use to customize for nav menu/toggle.
+@Route(value = "", layout = MainLayout.class)
 public class ListView extends VerticalLayout {
     // creating the CRM grid.
     // Calling on a built-in Vaadin class, called 'Contact class'. details can be view by right-clicking on it.

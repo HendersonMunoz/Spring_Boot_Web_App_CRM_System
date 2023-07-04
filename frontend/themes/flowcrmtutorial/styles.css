@@ -7,3 +7,9 @@
     display: none;
   }
 }
+
+//CSS code for the Nav menu. Anytime we view the List, it will bold and underline it.
+a[highlight] {
+    font-weight: bold;
+    text-decoration: underline;
+}
