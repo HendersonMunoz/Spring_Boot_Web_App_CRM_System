@@ -13,6 +13,7 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
+import jakarta.annotation.security.PermitAll;
 
 import java.util.Collections;
 
@@ -21,6 +22,8 @@ import java.util.Collections;
 @PageTitle("Contacts | Vaadin CRM")
 // MainLayout.cass is the java class we use to customize for nav menu/toggle.
 @Route(value = "", layout = MainLayout.class)
+// all logged-in users, should be able to access this view.
+@PermitAll
 public class ListView extends VerticalLayout {
     // creating the CRM grid.
     // Calling on a built-in Vaadin class, called 'Contact class'. details can be view by right-clicking on it.

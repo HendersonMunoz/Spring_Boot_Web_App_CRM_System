@@ -10,9 +10,12 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import jakarta.annotation.security.PermitAll;
 
 @Route(value = "dashboard", layout = MainLayout.class)
 @PageTitle("Dashboard | Vaadin CRM")
+// all logged-in users, should be able to access this view.
+@PermitAll
 public class DashboardView extends VerticalLayout {
     //Constructor
     private CrmService service;

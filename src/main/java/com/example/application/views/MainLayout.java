@@ -1,8 +1,10 @@
 package com.example.application.views;
 
+import com.example.application.security.SecurityService;
 import com.example.application.views.list.ListView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -11,8 +13,12 @@ import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.RouterLink;
 
 public class MainLayout extends AppLayout {
+    private SecurityService securityService;
+
     //constructor
-    public MainLayout() {
+    public MainLayout(SecurityService securityService) {
+        //field for the security service call
+        this.securityService = securityService;
         //helper method to create header
         createHeader();
         //helper method to create drawer
@@ -23,8 +29,11 @@ public class MainLayout extends AppLayout {
         H1 logo = new H1("Vaadin CRM");
         //design class names can be found on the vaadin design docs (https://vaadin.com/docs/latest/styling/lumo/utility-classes)
         logo.addClassNames("text-l", "m-m");
+
+        // Log out button
+        Button logOut = new  Button("Log out", e -> securityService.logout());
         //creating a new horizontal layout for what is going to go in the H1 header above.
-        HorizontalLayout header = new HorizontalLayout(new DrawerToggle(), logo);
+        HorizontalLayout header = new HorizontalLayout(new DrawerToggle(), logo, logOut);
         header.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
         header.expand(logo);
         header.setWidthFull();
@@ -40,6 +49,7 @@ public class MainLayout extends AppLayout {
 
         addToDrawer(new VerticalLayout(
                 listView,
+                //adding the dashboard link to the nav menu. S
                 new RouterLink("Dashboard", DashboardView.class)
         ));
     }
