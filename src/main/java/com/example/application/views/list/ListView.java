@@ -14,11 +14,14 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import jakarta.annotation.security.PermitAll;
+import org.springframework.context.annotation.Scope;
 
 import java.util.Collections;
 
+// components for the ListViewTest
+@org.springframework.stereotype.Component
+@Scope("prototype")
 //UI ELEMENTS RESIDE WITHIN THIS LISTVIEW FILE.
-
 @PageTitle("Contacts | Vaadin CRM")
 // MainLayout.cass is the java class we use to customize for nav menu/toggle.
 @Route(value = "", layout = MainLayout.class)
