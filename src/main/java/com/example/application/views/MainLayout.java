@@ -49,8 +49,8 @@ public class MainLayout extends AppLayout {
 
         addToDrawer(new VerticalLayout(
                 listView,
-                //adding the dashboard link to the nav menu. S
-                new RouterLink("Dashboard", DashboardView.class)
+                //Hiding the dashboard link from the menu since it's a paid Vaadin feature that I don't have access to.
+                //new RouterLink("Dashboard", DashboardView.class)
         ));
     }
 }
