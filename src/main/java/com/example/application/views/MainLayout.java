@@ -49,8 +49,8 @@ public class MainLayout extends AppLayout {
 
         addToDrawer(new VerticalLayout(
                 listView,
-                //Hiding the dashboard link from the menu since it's a paid Vaadin feature that I don't have access to.
-                //new RouterLink("Dashboard", DashboardView.class)
+                //The Pie chart is a paid Vaadin feature, so it will not work for this project.
+                new RouterLink("Dashboard", DashboardView.class)
         ));
     }
 }
